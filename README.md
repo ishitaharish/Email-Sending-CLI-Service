@@ -69,8 +69,8 @@ The following command should be entered:
   -s "Application for Software Engineer" \
   -a "/Users/yourname/Documents/resume.pdf" `
 
-##6. SMTP Configuration (Important)
-###Gmail Users
+## 6. SMTP Configuration (Important)
+### Gmail Users
 Gmail does not allow normal account passwords for SMTP. You must use an App Password.
 Creating a Gmail App Password: 
   -Go to Google Account → Security
@@ -84,10 +84,10 @@ Creating a Gmail App Password:
 
 When prompted in the terminal:
 
-SMTP Host: smtp.gmail.com
+`SMTP Host: smtp.gmail.com
 SMTP Port: 587
 Email Username: your_email@gmail.com
-Email App Password: <your app password>
+Email App Password: <your app password>`
 
 
 
