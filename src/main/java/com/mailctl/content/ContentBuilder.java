@@ -22,8 +22,8 @@ public class ContentBuilder {
 
         // Default template with placeholders replaced
         return "Hi " + name + ",\n\n" +
-                "I am reaching out from the engineering team at " + company + 
-                "Thank you for your time and consideration.\n\n" +
+                "I am reaching out from the engineering team at " + company + ". "
+                "Thank you for your time and consideration.\n\n" ; 
                 
                 
     }
