@@ -1,13 +1,18 @@
 package com.mailctl.smtp;
 
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import jakarta.mail.Authenticator;
+import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import java.io.Console;
 import java.util.Properties;
@@ -54,17 +59,37 @@ public class SmtpService {
             message.setFrom(new InternetAddress(user));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(subject);
-            message.setText(body); // For simplicity, plain text
 
-            // TODO: Handle attachments if attachmentsCsv != null
+            if (attachmentsCsv != null && !attachmentsCsv.isEmpty()) {
+                // Body + one part per attachment
+                Multipart multipart = new MimeMultipart();
+
+                BodyPart textPart = new MimeBodyPart();
+                textPart.setText(body);
+                multipart.addBodyPart(textPart);
+
+                for (String rawPath : attachmentsCsv.split(",")) {
+                    String path = rawPath.trim();
+                    if (path.isEmpty()) continue;
+
+                    MimeBodyPart attachmentPart = new MimeBodyPart();
+                    FileDataSource source = new FileDataSource(path);
+                    attachmentPart.setDataHandler(new DataHandler(source));
+                    attachmentPart.setFileName(source.getName());
+                    multipart.addBodyPart(attachmentPart);
+                }
+
+                message.setContent(multipart);
+            } else {
+                message.setText(body); // For simplicity, plain text
+            }
 
             Transport.send(message);
             System.out.println("Email sent to: " + toEmail);
             return true;
 
-        } catch (MessagingException e) {
-            System.err.println("Failed to send email to: " + toEmail);
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Failed to send email to: " + toEmail + " (" + e.getMessage() + ")");
             return false;
         }
     }
